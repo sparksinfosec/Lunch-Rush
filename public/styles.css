@@ -1,0 +1,622 @@
+* {
+  font-family: Ariel, Verdana, sans-serif;
+  line-height: 1.5;
+}
+Body {
+  background-color: #80061c;
+  margin: 0px;
+}
+header {
+  width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  height: 200px;
+  background: #000000;
+  color: #ffffff;
+}
+#header-image {
+  text-align: center;
+}
+footer {
+  width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  font-style: italic;
+  text-align: center;
+  background-color: #000000;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 0px;
+  padding-right: 0px;
+  color: #ffffff;
+}
+h1 {
+  font-family: Verdana, Ariel, sans-serif;
+  font-size: 32px;
+  font-weight: bold;
+  margin: 0px;
+  padding-top: 50px;
+  padding-left: 32px;
+  line-height: 1.5;
+}
+#grid-container {
+  width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #ffffff;
+  display: grid;
+  grid-template-columns: 184px 1fr;
+  gap: 0 16px;
+}
+nav {
+  width: 200px;
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+nav a {
+  color: #fff;
+  display: block;
+  width: 150px;
+  padding: 15px 25px;
+  background-color: #80061c;
+  background-image: radial-gradient(
+      93% 87% at 87% 89%,
+      rgba(0, 0, 0, 0.23) 0%,
+      transparent 86.18%
+    ),
+    radial-gradient(
+      66% 66% at 26% 20%,
+      rgba(255, 255, 255, 0.55) 0%,
+      rgba(255, 255, 255, 0) 69.79%,
+      rgba(255, 255, 255, 0) 100%
+    );
+  box-shadow: inset -3px -3px 9px rgba(255, 255, 255, 0.25),
+    inset 0px 3px 9px rgba(255, 255, 255, 0.3),
+    inset 0px 1px 1px rgba(255, 255, 255, 0.6),
+    inset 0px -8px 36px rgba(0, 0, 0, 0.3),
+    inset 0px 1px 5px rgba(255, 255, 255, 0.6), 2px 19px 31px rgba(0, 0, 0, 0.2);
+  border-radius: 14px;
+  font-weight: bold;
+  font-size: 16px;
+  text-decoration: none;
+  border: 0;
+  box-sizing: border-box;
+}
+
+nav ul {
+  padding:0
+}
+
+nav li {
+  list-style-type: none;
+  text-align: center;
+  display: inline-block;
+  padding: 20px;
+  width: 200px;
+  margin-left: 20px;
+  flex: 1;
+  box-sizing: border-box
+}
+nav a:hover {
+  background-color: #5e5b5c;
+}
+
+img {
+  align-items: center;
+  width: 150px;
+}
+address {
+  clear: both;
+  font-style: italic;
+}
+main p {
+  display: inline-block;
+  width: 50%;
+  padding: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  color: #000000;
+  text-align: center;
+}
+main ul {
+  display: inline-block;
+  width: 50%;
+  margin-left: 32px;
+  list-style-type: disc;
+  padding: 32px;
+}
+h2 {
+  color: #000000;
+  font-family: Verdana, Ariel, sans-serif;
+  line-height: 1.5;
+  font-size: 25px;
+  font-weight: bold;
+  padding: 16px;
+  text-align: center;
+}
+form {
+  width: 400px;
+  margin: 20px auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #80061c;
+  padding: 20px;
+  color: white;
+  border-radius: 10px;
+  display: block;
+  border-color: #000000;
+  border-style: double;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+label {
+  display: flex;
+  width: 100%;
+  font-weight: bold;
+  size: 16px;
+  border-radius: 4px;
+  border-color: #000000;
+  padding: 5px;
+}
+input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #000000;
+  border-radius: 4px;
+}
+select {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  size: 16px;
+  margin-bottom: 24px;
+  border-radius: 4px;
+  border-style: 2px inset;
+  border-color: #000000;
+}
+.locations {
+  text-align: center;
+}
+.flex-container {
+  display: flex;
+  flex-direction: column;
+  margin-left: auto;
+  margin-right: auto;
+  width: 25%;
+  text-align: center;
+  padding: 30px;
+  align-items: center;
+  justify-content: center;
+}
+.center {
+  display: block;
+  margin: 0 auto;
+}
+img {
+  display: block;
+  margin: 0 auto;
+  padding: 30px;
+}
+
+button {
+  box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid #000000;
+    border-radius: 4px;
+}
+
+.delete-button {
+  width: 30px !important;
+  height: 30px !important;
+  background: url('delete-icon.png') no-repeat center center !important;
+  background-size: cover !important;
+  border: none !important;
+  cursor: pointer !important;
+}
+
+.delete-button img {
+  width: 100%;
+  height: 100%;
+}
+
+.menu-button {
+  width: 207px;
+  margin-bottom: 6px;
+}
+
+
+#ingredients-container div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+#ingredients-container div select {
+  width: 160px;
+  margin-right: 5px;
+}
+
+#ingredients-container div input[type="number"] {
+  width: 60px;
+  font-size: 16px;
+  margin-right: 5px;
+  margin-left: 5px;
+}
+
+#ingredients-container div span {
+  width: 70px;
+}
+
+#ingredients-container div label {
+  margin-right: 5px;
+}
+
+#order-form form {
+  width: 400px;
+}
+
+#locations {
+  width: 215px;
+}
+
+#inventory {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 600px;
+}
+
+#inventory form {
+  width: 450px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+#inventory form label,
+#inventory form input[type="number"],
+#inventory form span {
+  display: block;
+  margin-bottom: 20px;
+  flex: 0 0 calc(33.33% - 20px);
+}
+
+#inventory form label {
+  flex: 0 0 150px;
+  margin-right: 10px;
+}
+
+#inventory form input[type="number"] {
+  width: 70px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+/* .th-ingredient-table-1 {
+  width: 170px !important;
+  padding: 0px !important;
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+  text-align: center;
+}
+
+.td-ingredient-table-1 {
+  width: 170px !important;
+  padding: 0px !important;
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+  text-align: right;
+} */
+
+.ingredient-table {
+  border-spacing: 0;
+  width: auto;
+  margin: 0 auto;
+}
+
+table {
+  margin-bottom: 10px;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  border: 1px solid black;
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+.retrieved-tables {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  justify-content: left;
+  margin-top: 20px;
+  margin-left: 75px;
+  margin-right: 75px;
+  font-family: Ariel, Verdana, sans-serif;
+  line-height: 1.5;
+}
+
+.retrieved-tables > div > span {
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+#reportingTables {
+  width: 850px;
+}
+
+.table-container-div {
+  margin-bottom: 15px;
+}
+
+#itemCostSpan, #itemPriceSpan {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+#welcomeMessage {
+  display: flex;
+  justify-content: center;
+  margin-top: 80px;
+  margin-bottom: 10px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.result-message {
+  display: none;
+  border: 1px solid #ffffff;
+  border-radius: 10px;
+  padding: 10px;
+  color: #ffffff;
+  margin-bottom: 5px;
+}
+
+#incoming {
+  margin-bottom: 10px;
+}
+
+.get-ingredients-btn {
+  display: block;
+}
+
+.submit-button{
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.form-input-box{
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+.ingredient-dropdown{
+  width: 245px !important;
+  margin-top: 3px;
+  margin-bottom: 3px;
+  margin-left: 3px;
+  margin-right: 10px;
+}
+
+.dynamic-ingredient-form{
+  width: 500px
+}
+
+#delivery-type-ID-container {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+#delivery-type-ID-container label {
+  margin-top: -11px;
+  margin-left: -5px
+}
+
+#ID-label {
+  margin-top: 0px !important;
+}
+
+#location-and-ID {
+  display: flex;
+  align-items: center;
+  margin-bottom: -15px;
+}
+
+#delivery-type-ID {
+  display: inline-block;
+  width: 80px;
+  margin-top: 10px;
+  margin-left: -5px;
+  margin-bottom: 10px;
+}
+
+#get-ingredients-btn-container {
+  margin-top: 0px;
+}
+
+#submit-button-div {
+  display: none;
+}
+
+.location-label {
+  margin-top: 5px;
+  margin-left: 45px;
+  margin-right: 10px;
+}
+
+.location-radio-container {
+  display: flex;
+  align-items: center;
+  margin-top: -5px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.location-radio-container input {
+  vertical-align: middle;
+  margin-right: 5px;
+}
+
+#order, #inventory-transaction {
+  margin-left: -2px;
+  margin-right: 10px;
+}
+
+.delivery-type-label {
+  display: inline-block;
+  margin-right: 5px;
+  margin-left: 15px;
+  white-space: nowrap;
+}
+
+.location-radio-label {
+  display: inline-block;
+  margin-right: 10px;
+  white-space: nowrap;
+}
+
+.quantity-label{
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+#add-ingredient-btn {
+  margin-bottom: 20px !important;
+}
+
+.location-selector{
+  display: flex !important;
+  margin-top: -35px;
+}
+
+#label-for-stores{
+  text-align: center;
+  margin-left: 38px;
+}
+
+.registration-container {
+  text-align: center;
+  color: #ffffff;
+  /* background-color: #80061c; */
+  border-radius: 10px;
+  padding: 20px;
+  /* box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); */
+}
+
+.registration-heading {
+  margin-top: 0;
+  color: #000000;
+}
+
+.registration-form input {
+  width: 90%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.registration-button {
+  width: 50%;
+  padding: 10px;
+  margin-top: -15px;
+  background-color: #ffffff;
+  color: #000000;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.registration-button:hover {
+  background-color: #989898;
+}
+
+.error-message {
+  color: #ffffff;
+  font-weight: bolder;
+  margin-top: -32px;
+  margin-bottom: 32px;
+}
+
+.response-message {
+  display: none;
+  color: #ffffff;
+  font-weight: bolder;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 32px;
+}
+
+#date-choice {
+  display: flex;
+}
+
+.date-radio-container {
+  display: flex;
+  white-space: nowrap;
+  margin-left: 8px;
+  margin-right: 8px;
+  margin-bottom: 15px;
+}
+
+#date-selection {
+  display: none;
+}
+
+#date-selection.show {
+  display: block;
+}
+
+.date-container {
+  display: flex;
+  align-items: center;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.date-container input {
+  margin-left: -40px;
+  width: 250px;
+}
+
+.quantity-div {
+  padding-left: 5px;
+  padding-right: 5px;
+  margin-right: 2px;
+}
+
+.measurement-unit-span {
+  margin-left: -2px;
+}
+
+.view-button {
+  margin-top: 10px;
+}

@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Lunch Rush Database</title>
+    <link href="styles.css" rel="stylesheet" />
+    <link rel="icon" href="../favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
+    <script src="/common.js"></script>
+  </head>
+  <body>
+    <header>
+      <div id="header-image">
+        <img src="Lunch_Rush_3.png" />
+      </div>
+    </header>
+    <div id="grid-container">
+      <nav>
+        <ul>
+          <li><a href="/index.html">Home</a></li>
+          <li><a href="/stores.html">Stores</a></li>
+          <li><a href="/menu.html">Menu</a></li>
+          <li><a href="/inventory.html">Log Inventory</a></li>
+          <li><a href="/inventorytransaction.html">Exchange Inventory</a></li>
+          <li><a href="/ordering.html">Ordering</a></li>
+          <li><a href="/deliveries.html">Deliveries</a></li>
+          <li><a href="/reporting-analytics.html">Reporting &<br>Analytics</a></li>
+          <li><a href="/account-settings.html">Account Settings</a></li>
+          <li id="logout"><a href=#>Logout</a></li>
+        </ul>
+      </nav>
+      <main>
+        <div class="flex-container">
+          <div class="flex3">
+            <label for="stores" id="label-for-stores"><h2>Record an Inventory Log:</h2></label>
+              <div id="inventory">
+                <form>
+                  <div class="response-message" id="response-message"></div>
+                  <label for=ingredient1>Bread Rolls</label>
+                  <input type="number" id="ingredient1" name="ingredient1" required=true value="0" min="0">
+                  <span>rolls</span><br>
+                  <label for=ingredient2>Mayonnaise</label>
+                  <input type="number" id="ingredient2" name="ingredient2" required=true value="0" min="0">
+                  <span>fl oz</span><br>
+                  <label for=ingredient3>Mustard</label>
+                  <input type="number" id="ingredient3" name="ingredient3" required=true value="0" min="0">
+                  <span>fl oz</span><br>
+                  <label for=ingredient4>Ranch Dressing</label>
+                  <input type="number" id="ingredient4" name="ingredient4" required=true value="0" min="0">
+                  <span>fl oz</span><br>
+                  <label for=ingredient5>Sliced Turkey</label>
+                  <input type="number" id="ingredient5" name="ingredient5" required=true value="0" min="0">
+                  <span>oz</span><br>
+                  <label for=ingredient6>Sliced Ham</label>
+                  <input type="number" id="ingredient6" name="ingredient6" required=true value="0" min="0">
+                  <span>oz</span><br>
+                  <label for=ingredient7>Rotissere Chicken</label>
+                  <input type="number" id="ingredient7" name="ingredient7" required=true value="0" min="0">
+                  <span>oz</span><br>
+                  <label for=ingredient8>Bacon</label>
+                  <input type="number" id="ingredient8" name="ingredient8" required=true value="0" min="0">
+                  <span>oz</span><br>
+                  <label for=ingredient9>Cheese</label>
+                  <input type="number" id="ingredient9" name="ingredient9" required=true value="0" min="0">
+                  <span>oz</span><br>
+                  <label for=ingredient10>Lettuce</label>
+                  <input type="number" id="ingredient10" name="ingredient10" required=true value="0" min="0">
+                  <span>oz</span><br>
+                  <label for=ingredient11>Tomato</label>
+                  <input type="number" id="ingredient11" name="ingredient11" required=true value="0" min="0">
+                  <span>oz</span><br>
+                  <input type="submit" value="Log Inventory" />
+                </form>
+              </div>
+          </div>
+        </div>
+        <img src="sandwich1.gif" alt="a cartoon sub sandwich" class="center" />
+      </main>
+      <footer>
+        <p>Group 14 IFT 402 Fall 2023</p>
+      </footer>
+
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          var form = document.querySelector("form");
+          displayMessage();
+
+          form.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            try {
+              // Get user info
+              const userInfoResponse = await fetch('/api/users/userInfo');
+              const userInfo = await userInfoResponse.json();
+
+              // Get the latest inventory log ID
+              const latestLogIDResponse = await fetch(`/api/inventoryLogs/inventoryLogs/latest/${userInfo.locationID}`);
+              const latestLogIDData = await latestLogIDResponse.json();
+              const latestLogID = latestLogIDData[0].inventoryLogID;  
+
+              const phoenixTime = new Date(latestLogIDData[0].dateAndTime);
+              const year = phoenixTime.getFullYear();
+              const month = (phoenixTime.getMonth() + 1).toString().padStart(2, '0');
+              const day = phoenixTime.getDate().toString().padStart(2, '0');
+              const hours = phoenixTime.getHours().toString().padStart(2, '0');
+              const minutes = phoenixTime.getMinutes().toString().padStart(2, '0');
+              const seconds = phoenixTime.getSeconds().toString().padStart(2, '0');
+
+              const previousLogDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+              const previousLogDate = previousLogDateTime.slice(0, 10); // Extracting 'YYYY-MM-DD'
+              const currentDateTime = getCurrentTimeInPhoenix().toISOString().slice(0, 19).replace("T", " ");
+              const currentDate = getCurrentDateInPhoenix();
+
+              const locationID = userInfo.locationID;
+              const startDateTime = previousLogDateTime;
+              const startDate = previousLogDate;
+              const endDateTime = currentDateTime;
+              const endDate = currentDate;
+
+              // Fetch data from API routes
+              const deliveriesOrdersResponse = await fetch(`/api/deliveries/orders/${locationID}/${startDateTime}/${endDateTime}`);
+              const deliveriesOrdersData = await deliveriesOrdersResponse.json();
+
+              const deliveriesInventoryTransactionsResponse = await fetch(`/api/deliveries/inventoryTransactions/${locationID}/${startDateTime}/${endDateTime}`);
+              const deliveriesInventoryTransactionsData = await deliveriesInventoryTransactionsResponse.json();
+
+              const inventoryLogsResponse = await fetch(`/api/inventoryLogs/inventoryLogs/${locationID}/${startDateTime}/${endDateTime}`);
+              const inventoryLogsData = await inventoryLogsResponse.json();
+
+              const inventoryTransactionsResponse = await fetch(`/api/inventoryTransactions/inventoryTransactions/outgoing/${locationID}/${startDate}/${endDate}`);
+              const inventoryTransactionsData = await inventoryTransactionsResponse.json();
+
+              const transactionsResponse = await fetch(`/api/transactions/transactions/${locationID}/${startDateTime}/${endDateTime}`);
+              const transactionsData = await transactionsResponse.json();
+
+              const menuItemsResponse = await fetch(`/api/menuItems/menuItems`);
+              const menuItemsData = await menuItemsResponse.json();
+
+              // Store the fetched data into const objects
+              const deliveriesOrders = deliveriesOrdersData;
+              const deliveriesInventoryTransactions = deliveriesInventoryTransactionsData;
+              const inventoryLogs = inventoryLogsData;
+              const inventoryTransactions = inventoryTransactionsData;
+              const transactions = transactionsData;
+              const menuItems = menuItemsData;
+
+              const deliveriesLineItems = [];
+              const inventoryLogsLineItems = [];
+              const inventoryTransactionsLineItems = [];
+              const transactionsLineItems = [];
+              const menuItemIngredients = [];
+
+              // Function to fetch line items for a specific entry
+              async function fetchLineItems(apiRoute, id) {
+                const response = await fetch(`/api/${apiRoute}/${apiRoute}/lineItems/${id}`);
+                return response.json();
+              }
+
+              // Function to populate line items array for a specific table
+              async function populateLineItemsArray(apiRoute, mainArray, lineItemsArray, idLabel) {
+                if (mainArray.length > 0) {
+                  for (const entry of mainArray) {
+                    const lineItems = await fetchLineItems(apiRoute, entry[`${idLabel}ID`]);
+                    lineItemsArray.push(...lineItems);
+                  }
+                }
+              }
+
+              // Call the functions to populate line items arrays
+              await populateLineItemsArray('deliveries', deliveriesOrders, deliveriesLineItems, 'delivery');
+              await populateLineItemsArray('deliveries', deliveriesInventoryTransactions, deliveriesLineItems, 'delivery');
+              await populateLineItemsArray('inventoryLogs', inventoryLogs, inventoryLogsLineItems, 'inventoryLog');
+              await populateLineItemsArray('inventoryTransactions', inventoryTransactions, inventoryTransactionsLineItems, 'inventoryTransaction');
+              await populateLineItemsArray('transactions', transactions, transactionsLineItems, 'transaction');
+
+              for (let i = 1; i <= 5; i++) {
+                const response = await fetch(`/api/menuItems/menuItems/ingredients/${i}`);
+                const menuItemIngredientList = await response.json();
+                menuItemIngredients.push(menuItemIngredientList);
+              }
+
+              // initialize quantity variables.
+              let breadRollsQuantity = 0,
+              mayonnaiseQuantity = 0,
+              mustardQuantity = 0,
+              ranchDressingQuantity = 0,
+              slicedTurkeyQuantity = 0,
+              sliceHamQuantity = 0,
+              rotissereChickenQuantity = 0,
+              baconQuantity = 0,
+              cheeseQuantity = 0,
+              lettuceQuantity = 0,
+              tomatoQuantity = 0;
+
+              for (const entry of inventoryLogsLineItems) {
+                const ingredientID = entry.ingredientID;
+                const quantity = entry.quantity;
+
+                switch (ingredientID) {
+                  case 1:
+                    breadRollsQuantity += quantity;
+                    break;
+                  case 2:
+                    mayonnaiseQuantity += quantity;
+                    break;
+                  case 3:
+                    mustardQuantity += quantity;
+                    break;
+                  case 4:
+                    ranchDressingQuantity += quantity;
+                    break;
+                  case 5:
+                    slicedTurkeyQuantity += quantity;
+                    break;
+                  case 6:
+                    sliceHamQuantity += quantity;
+                    break;
+                  case 7:
+                    rotissereChickenQuantity += quantity;
+                    break;
+                  case 8:
+                    baconQuantity += quantity;
+                    break;
+                  case 9:
+                    cheeseQuantity += quantity;
+                    break;
+                  case 10:
+                    lettuceQuantity += quantity;
+                    break;
+                  case 11:
+                    tomatoQuantity += quantity;
+                    break;
+                  default:
+                    // Handle unexpected ingredientID (if any)
+                    break;
+                }
+              }
+
+              for (const transactionLineItem of transactionsLineItems) {
+                if (transactionLineItem.menuItemID) {
+                  const menuItemIndex = transactionLineItem.menuItemID - 1;
+                  if (menuItemIndex >= 0 && menuItemIndex < menuItemIngredients.length) {
+                    const menuItemIngredientsForItem = menuItemIngredients[menuItemIndex];
+                    for (let i = 0; i < menuItemIngredientsForItem.length; i++) {
+                      const ingredient = menuItemIngredientsForItem[i];
+                      switch (ingredient.ingredientID) {
+                        case 1:
+                          breadRollsQuantity -= ingredient.quantity * transactionLineItem.quantity;
+                          break;
+                        case 2:
+                          mayonnaiseQuantity -= ingredient.quantity * transactionLineItem.quantity;
+                          break;
+                        case 3:
+                          mustardQuantity -= ingredient.quantity * transactionLineItem.quantity;
+                          break;
+                        case 4:
+                          ranchDressingQuantity -= ingredient.quantity * transactionLineItem.quantity;
+                          break;
+                        case 5:
+                          slicedTurkeyQuantity -= ingredient.quantity * transactionLineItem.quantity;
+                          break;
+                        case 6:
+                          sliceHamQuantity -= ingredient.quantity * transactionLineItem.quantity;
+                          break;
+                        case 7:
+                          rotissereChickenQuantity -= ingredient.quantity * transactionLineItem.quantity;
+                          break;
+                        case 8:
+                          baconQuantity -= ingredient.quantity * transactionLineItem.quantity;
+                          break;
+                        case 9:
+                          cheeseQuantity -= ingredient.quantity * transactionLineItem.quantity;
+                          break;
+                        case 10:
+                          lettuceQuantity -= ingredient.quantity * transactionLineItem.quantity;
+                          break;
+                        case 11:
+                          tomatoQuantity -= ingredient.quantity * transactionLineItem.quantity;
+                          break;
+                        default:
+                          console.log("unexpected case")
+                          // Handle unexpected cases
+                          break;
+                      }
+                    }
+                  }
+                }
+              }
+
+              for (const inventoryTransaction of inventoryTransactions) {
+                const inventoryTransactionID = inventoryTransaction.inventoryTransactionID;
+
+                // Find the corresponding line items for the current inventory transaction
+                const relevantLineItems = inventoryTransactionsLineItems.filter(
+                  (lineItem) => lineItem.InventoryTransactionID === inventoryTransactionID
+                );
+                
+                try {
+                for (const lineItem of relevantLineItems) {
+                  const ingredientID = lineItem.ingredientID;
+                  const quantity = lineItem.quantity;
+
+                  switch (ingredientID) {
+                    case 1:
+                      breadRollsQuantity -= quantity;
+                      break;
+                    case 2:
+                      mayonnaiseQuantity -= quantity;
+                      break;
+                    case 3:
+                      mustardQuantity -= quantity;
+                      break;
+                    case 4:
+                      ranchDressingQuantity -= quantity;
+                      break;
+                    case 5:
+                      slicedTurkeyQuantity -= quantity;
+                      break;
+                    case 6:
+                      sliceHamQuantity -= quantity;
+                      break;
+                    case 7:
+                      rotissereChickenQuantity -= quantity;
+                      break;
+                    case 8:
+                      baconQuantity -= quantity;
+                      break;
+                    case 9:
+                      cheeseQuantity -= quantity;
+                      break;
+                    case 10:
+                      lettuceQuantity -= quantity;
+                      break;
+                    case 11:
+                      tomatoQuantity -= quantity;
+                      break;
+                    default:
+                      console.log("unexpected case");
+                      // Handle unexpected cases
+                      break;
+                  }
+                }
+              } catch (error) {
+                console.error("Error in the loop:", error);
+              }
+            }
+
+              for (const deliveryOrder of deliveriesOrders) {
+                for (const deliveryLineItem of deliveriesLineItems) {
+                  if (deliveryLineItem.deliveryOrderID === deliveryOrder.deliveryOrderID) {
+                    const ingredientID = deliveryLineItem.ingredientID;
+                    const deliveredQuantity = deliveryLineItem.deliveredQuantity;
+
+                    switch (ingredientID) {
+                      case 1:
+                        breadRollsQuantity += deliveredQuantity;
+                        break;
+                      case 2:
+                        mayonnaiseQuantity += deliveredQuantity;
+                        break;
+                      case 3:
+                        mustardQuantity += deliveredQuantity;
+                        break;
+                      case 4:
+                        ranchDressingQuantity += deliveredQuantity;
+                        break;
+                      case 5:
+                        slicedTurkeyQuantity += deliveredQuantity;
+                        break;
+                      case 6:
+                        sliceHamQuantity += deliveredQuantity;
+                        break;
+                      case 7:
+                        rotissereChickenQuantity += deliveredQuantity;
+                        break;
+                      case 8:
+                        baconQuantity += deliveredQuantity;
+                        break;
+                      case 9:
+                        cheeseQuantity += deliveredQuantity;
+                        break;
+                      case 10:
+                        lettuceQuantity += deliveredQuantity;
+                        break;
+                      case 11:
+                        tomatoQuantity += deliveredQuantity;
+                        break;
+                      default:
+                        console.log("unexpected case");
+                        // Handle unexpected cases
+                        break;
+                    }
+                  }
+                }
+              }
+
+              // Loop through deliveriesInventoryTransactions
+              for (const deliveryTransaction of deliveriesInventoryTransactions) {
+                for (const deliveryTransactionLineItem of deliveriesLineItems) {
+                  if (deliveryTransactionLineItem.deliveryTransactionID === deliveryTransaction.deliveryTransactionID) {
+                    const ingredientID = deliveryTransactionLineItem.ingredientID;
+                    const deliveredQuantity = deliveryTransactionLineItem.deliveredQuantity;
+
+                    switch (ingredientID) {
+                      case 1:
+                        breadRollsQuantity += deliveredQuantity;
+                        break;
+                      case 2:
+                        mayonnaiseQuantity += deliveredQuantity;
+                        break;
+                        case 3:
+                        mustardQuantity += deliveredQuantity;
+                        break;
+                      case 4:
+                        ranchDressingQuantity += deliveredQuantity;
+                        break;
+                      case 5:
+                        slicedTurkeyQuantity += deliveredQuantity;
+                        break;
+                      case 6:
+                        sliceHamQuantity += deliveredQuantity;
+                        break;
+                      case 7:
+                        rotissereChickenQuantity += deliveredQuantity;
+                        break;
+                      case 8:
+                        baconQuantity += deliveredQuantity;
+                        break;
+                      case 9:
+                        cheeseQuantity += deliveredQuantity;
+                        break;
+                      case 10:
+                        lettuceQuantity += deliveredQuantity;
+                        break;
+                      case 11:
+                        tomatoQuantity += deliveredQuantity;
+                        break;
+                      default:
+                        console.log("unexpected case");
+                        // Handle unexpected cases
+                        break;
+                    }
+                  }
+                }
+              }
+
+              // Prepare data for inventory log
+              const inventoryLogObject = {
+                inventoryLogID: latestLogID + 1,
+                locationID: userInfo.locationID,
+                dateAndTime: getCurrentTimeInPhoenix().toISOString().slice(0, 19).replace("T", " "),
+              };
+
+              // Prepare data for inventory log line items
+              const ingredients = [];
+              for (let i = 1; i <= 11; i++) {
+                const inputID = "ingredient" + i;
+                const quantity = parseInt(document.getElementById(inputID).value);
+
+                const ingredientObject = {
+                  inventoryLogID: inventoryLogObject.inventoryLogID,
+                  ingredientID: i,
+                  quantity: quantity,
+                };
+
+                ingredients.push(ingredientObject);
+              }
+
+              let discrepancyDetected = false,
+              totalExpectedQuantity = 0,
+              totalActualQuantity = 0,
+              degree,
+              message,
+              inventoryDiscrepancyObject;
+
+              inventoryDiscrepancyLineItems = [];
+              ingredientNames = [
+                breadRollsQuantity, 
+                mayonnaiseQuantity, 
+                mustardQuantity, 
+                ranchDressingQuantity,
+                slicedTurkeyQuantity,
+                sliceHamQuantity,
+                rotissereChickenQuantity,
+                baconQuantity,
+                cheeseQuantity,
+                lettuceQuantity,
+                tomatoQuantity
+              ]
+
+              for (let i = 1; i <= 11; i++) {
+                const inputID = "ingredient" + i;
+                const expectedQuantity = ingredientNames[i - 1];
+
+                const actualQuantity = parseInt(document.getElementById(inputID).value);
+
+                totalExpectedQuantity += expectedQuantity;
+                totalActualQuantity += actualQuantity;
+
+                if (expectedQuantity !== actualQuantity) {
+                  discrepancyDetected = true;
+
+                  const discrepancyItem = {
+                    inventoryLogID: latestLogID + 1,
+                    ingredientID: i,
+                    expectedQuantity: expectedQuantity,
+                    actualQuantity: actualQuantity,
+                    difference: 1 - Math.round((actualQuantity / expectedQuantity) * 10000) / 10000,
+                  };
+
+                  inventoryDiscrepancyLineItems.push(discrepancyItem);
+                }
+              }
+
+              const totalDifference = 1 - Math.round((totalActualQuantity / totalExpectedQuantity) * 10000) / 10000;
+              if (totalDifference === 0) {
+                degree = 0;
+                message = "The inventory log was saved successfully."
+              } else if ( totalDifference < 0) {
+                degree = 1;
+                message = "The inventory log was saved successfully. The on hand quantity was higher than expected. Visit Reporting & Analytics for more information."
+              } else if (totalDifference < 0.015) {
+                degree = 2;
+                message = "The inventory log was saved successfully. The on hand quantity was less than expected, but not by a significant margin. Visit Reporting & Analytics for more information."
+              } else if (totalDifference >= 0.015 && totalDifference < 0.02) {
+                degree = 3;
+                message = "The inventory log was saved successfully. The on hand quantity was less than expected by a significant. Visit Reporting & Analytics for more information."
+              } else if (totalDifference >= 0.02 && totalDifference < 0.05) {
+                degree = 4;
+                message = "The inventory log was saved successfully. The on hand quantity was less than expected by a critical margin. Visit Reporting & Analytics for more information."
+              } else {
+                degree = 5;
+                message = "The inventory log was saved successfully. The on hand quantity was less than expected by an extremely critical margin. Visit Reporting & Analytics for more information."
+              }
+
+              if (discrepancyDetected === true) {
+                inventoryDiscrepancyObject = {
+                  inventoryLogID: latestLogID + 1,
+                  locationID: userInfo.locationID,
+                  dateAndTime: getCurrentTimeInPhoenix().toISOString().slice(0, 19).replace("T", " "),
+                  totalDifference: totalDifference,
+                  degree: degree
+                }
+              }
+
+              // Post inventory log
+              const postLogResponse = await fetch(`/api/inventoryLogs/inventoryLogs`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(inventoryLogObject),
+              });
+
+              // Post inventory log line items
+              for (const ingredientObject of ingredients) {
+                try {
+                  const postLineItemsResponse = await fetch(`/api/inventoryLogs/inventoryLogs/lineItems`, {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(ingredientObject),
+                  });
+
+                  const result = await postLineItemsResponse.json();
+                } catch (error) {
+                  console.error('Error posting line item:', error);
+                  setResultMessage('An error occurred. Please try again later.', 'error');
+                  return;
+                }
+              }
+
+              if (discrepancyDetected === true) {
+                // Post inventory discrepancy
+                try {
+                  const postDiscrepancyResponse = await fetch(`/api/inventoryLogs/inventoryDiscrepancies`, {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(inventoryDiscrepancyObject),
+                  });
+                } catch (error) {
+                  console.error('Error posting discrepancy:', error);
+                  setResultMessage('An error occurred. Please try again later.', 'error');
+                }
+
+                // Post inventory discrepancy line items
+                for (const discrepancyItem of inventoryDiscrepancyLineItems) {
+                  try {
+                    const postDiscrepancyLineItemsResponse = await fetch(`/api/inventoryLogs/inventoryDiscrepancies/lineItems`, {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify(discrepancyItem),
+                    });
+
+                    const result = await postDiscrepancyLineItemsResponse.json();
+                  } catch (error) {
+                    console.error('Error posting line item:', error);
+                    setResultMessage('An error occurred. Please try again later.', 'error');
+                    return;
+                  }
+                }
+              }
+              
+              setResultMessage(message, 'success');
+
+            } catch (error) {
+              console.error('Error:', error);
+              setResultMessage('An error occurred. Please try again later.', 'error');
+            }
+          }
+          )});
+      </script>
+    </div>
+  </body>
+</html>

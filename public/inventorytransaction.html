@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Lunch Rush Database</title>
+    <link href="styles.css" rel="stylesheet" />
+    <link rel="icon" href="../favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
+    <script src="/common.js"></script>
+  </head>
+  <body>
+    <header>
+      <div id="header-image">
+        <img src="Lunch_Rush_3.png" />
+      </div>
+    </header>
+    <div id="grid-container">
+      <nav>
+        <ul>
+          <li><a href="/index.html">Home</a></li>
+          <li><a href="/stores.html">Stores</a></li>
+          <li><a href="/menu.html">Menu</a></li>
+          <li><a href="/inventory.html">Log Inventory</a></li>
+          <li><a href="/inventorytransaction.html">Exchange Inventory</a></li>
+          <li><a href="/ordering.html">Ordering</a></li>
+          <li><a href="/deliveries.html">Deliveries</a></li>
+          <li><a href="/reporting-analytics.html">Reporting &<br>Analytics</a></li>
+          <li><a href="/account-settings.html">Account Settings</a></li>
+          <li id="logout"><a href=#>Logout</a></li>
+        </ul>
+      </nav>
+      <main>
+        <h2>Inventory Transaction Form</h2>
+        <section id="form">
+          <form id="inventory-transaction-form" class="dynamic-ingredient-form">
+			<div class="response-message" id="response-message"></div>
+			<div id="ingredients-container">
+              <!-- Ingredient input sections will be dynamically added here -->
+            </div>
+            <button type="button" id="add-ingredient-btn" class="submit-button">Add Ingredient...</button>
+            <label class="location-label">Incoming Location:</label>
+            <select name="locations" id="locations" class="location-selector"  style="margin-left: 120px;">
+				<option value=1>678 Mountain Vista Ave</option>
+				<option value=2>981 Sunset Rd</option>
+				<option value=3>45 Eastern Rd</option>
+			</select>
+            <!-- <div class="location-radio-container">
+              <label for="outgoing" class="location-radio-label">Outgoing Location</label>
+              <input type="radio" id="outgoing" name="locationType" value="outgoing">
+            </div>
+            <div class="location-radio-container">
+              <label for="incoming" class="location-radio-label">Incoming Location</label>
+              <input type="radio" id="incoming" name="locationType" value="incoming">
+            </div> -->
+            <input type="submit" value="Log Inventory Transaction" class="submit-button"/>
+          </form>
+        </section>
+      </main>
+    </div>
+    <footer>
+      <p>Group 14 IFT 402 Fall 2023</p>
+    </footer>
+  
+    <script>
+      var inventoryTransactionForm = document.getElementById("inventory-transaction-form");
+      var ingredientsContainer = document.getElementById("ingredients-container");
+      var addIngredientButton = document.getElementById("add-ingredient-btn");
+      var ingredientCounter = 1;
+      var deleteButton = null;
+  
+      createIngredientSection("Rolls", "Fl Oz", "Oz");
+  
+      addIngredientButton.addEventListener("click", function () {
+        createIngredientSection("Rolls", "Fl Oz", "Oz");
+      });
+
+		document.addEventListener("DOMContentLoaded", function () {
+        var form = document.querySelector("form");
+        displayMessage();
+
+				form.addEventListener("submit", async function (event) {
+					event.preventDefault();
+
+					try {
+						// Get user info
+						const userInfoResponse = await fetch('/api/users/userInfo');
+						const userInfo = await userInfoResponse.json();
+
+						const selectedLocationID = parseInt(document.getElementById("locations").value, 10);
+
+						if (selectedLocationID === userInfo.locationID) {
+							setResultMessage("The location you've selected is the same as your own location. Please choose a different location.", 'error');
+							return;
+						}
+
+						checkDuplicates();
+
+						const latestTransactionIDResponse = await fetch(`/api/inventoryTransactions/inventoryTransactions/latest/${userInfo.locationID}`);
+						const latestTransactionIDData = await latestTransactionIDResponse.json();
+						const latestTransactionID = latestTransactionIDData[0].inventoryTransactionID;
+						const incomingLocationID = selectedLocationID
+
+						// Prepare data for inventory transaction
+						const inventoryTransactionObject = {
+							inventoryTransactionID: latestTransactionID + 1,
+							outgoingLocationID: userInfo.locationID,
+							incomingLocationID: incomingLocationID,
+							date: getCurrentDateInPhoenix(),
+						};
+
+						// Prepare data for inventory transaction line items
+						const ingredients = [];
+						for (let i = 1; i < ingredientCounter; i++) {
+							const ingredientID = parseInt(document.getElementById(`ingredient-${i}`).value);
+							const inputID = "ingredient-" + i;
+							const quantity = parseInt(document.getElementById(`quantity-${i}`).value);
+
+							const ingredientObject = {
+								inventoryTransactionID: inventoryTransactionObject.inventoryTransactionID,
+								ingredientID: ingredientID,
+								quantity: quantity,
+							};
+
+							ingredients.push(ingredientObject);
+						}
+
+						// Post inventory transaction
+						const postTransactionResponse = await fetch(`/api/inventoryTransactions/inventoryTransactions`, {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json',
+							},
+							body: JSON.stringify(inventoryTransactionObject),
+						});
+
+						// Post inventory transaction line items
+						for (const ingredientObject of ingredients) {
+							try {
+								const postLineItemsResponse = await fetch(`/api/inventoryTransactions/inventoryTransactions/lineItems`, {
+									method: 'POST',
+									headers: {
+										'Content-Type': 'application/json',
+									},
+									body: JSON.stringify(ingredientObject),
+								});
+
+								const result = await postLineItemsResponse.json();
+							} catch (error) {
+								console.error('Error posting line item:', error);
+								setResultMessage('An error occurred. Please try again later.', 'error');
+								return;
+							}
+						}
+								
+						setResultMessage('The inventory transaction was saved successfully.', 'success');
+
+						} catch (error) {
+							console.error('Error:', error);
+								setResultMessage('An error occurred. Please try again later.', 'error');
+						}
+				});
+			});
+    </script>
+  </body>
+</html>

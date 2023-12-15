@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Lunch Rush Database</title>
+    <link href="styles.css" rel="stylesheet" />
+    <link rel="icon" href="../favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
+    <script src="/common.js"></script>
+  </head>
+  <body>
+    <header>
+      <div id="header-image">
+        <img src="Lunch_Rush_3.png" />
+      </div>
+    </header>
+    <div id="grid-container">
+      <nav>
+        <ul>
+          <li><a href="/index.html">Home</a></li>
+          <li><a href="/stores.html">Stores</a></li>
+          <li><a href="/menu.html">Menu</a></li>
+          <li><a href="/inventory.html">Log Inventory</a></li>
+          <li><a href="/inventorytransaction.html">Exchange Inventory</a></li>
+          <li><a href="/ordering.html">Ordering</a></li>
+          <li><a href="/deliveries.html">Deliveries</a></li>
+          <li><a href="/reporting-analytics.html">Reporting &<br>Analytics</a></li>
+          <li><a href="/account-settings.html">Account Settings</a></li>
+          <li id="logout"><a href=#>Logout</a></li>
+        </ul>
+      </nav>
+      <main>
+        <h2>Ordering Form</h2>
+        <section id="form">
+          <form id="order-form" class="dynamic-ingredient-form">
+            <div class="response-message" id="response-message"></div>
+            <div id="ingredients-container">
+              <!-- Ingredient input sections will be dynamically added here -->
+            </div>
+            <button type="button" id="add-ingredient-btn" class="submit-button">Add Ingredient...</button>
+            <input type="submit" value="Place Order" />
+          </form>
+        </section>
+      </main>
+    </div>
+    <footer>
+      <p>Group 14 IFT 402 Fall 2023</p>
+    </footer>
+    <script>
+      var orderForm = document.getElementById("order-form");
+      var ingredientsContainer = document.getElementById("ingredients-container");
+      var addIngredientButton = document.getElementById("add-ingredient-btn");
+      var ingredientCounter = 1;
+      var deleteButton = null;
+
+      createIngredientSection("Bags", "Pints", "Pounds");
+  
+      addIngredientButton.addEventListener("click", function () {
+        createIngredientSection("Bags", "Pints", "Pounds");
+      });
+
+      document.addEventListener("DOMContentLoaded", function () {
+        var form = document.querySelector("form");
+        displayMessage();
+        
+
+				form.addEventListener("submit", async function (event) {
+					event.preventDefault();
+
+					try {
+						const userInfoResponse = await fetch('/api/users/userInfo');
+						const userInfo = await userInfoResponse.json();
+
+						const locationID = userInfo.locationID;
+            const username = userInfo.username;
+
+						const latestOrderIDResponse = await fetch(`/api/orders/orders/${locationID}`);
+						const latestOrderIDData = await latestOrderIDResponse.json();
+            let latestOrderID;
+            if (!latestOrderIDData[0]) {
+              latestOrderID = locationID * 100;
+            } else {
+						  latestOrderID = latestOrderIDData[0].orderID;
+            }
+
+						// Prepare data for order
+						const orderObject = {
+							orderID: latestOrderID + 1,
+							username: username,
+							locationID: locationID,
+							dateAndTime: getCurrentTimeInPhoenix().toISOString().slice(0, 19).replace("T", " "),
+						};
+
+						// Prepare data for order line items
+						const ingredients = [];
+						for (let i = 1; i < ingredientCounter; i++) {
+							const ingredientID = parseInt(document.getElementById(`ingredient-${i}`).value);
+							const inputID = "ingredient-" + i;
+							const quantity = parseInt(document.getElementById(`quantity-${i}`).value);
+
+							const ingredientObject = {
+								orderID: orderObject.orderID,
+								ingredientID: ingredientID,
+								quantity: quantity * 16,
+							};
+
+							ingredients.push(ingredientObject);
+						}
+
+						// Post order
+						const postOrderResponse = await fetch(`/api/orders/orders`, {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json',
+							},
+							body: JSON.stringify(orderObject),
+						});
+
+						// Post order line items
+						for (const ingredientObject of ingredients) {
+							try {
+								const postLineItemsResponse = await fetch(`/api/orders/orders/lineItems`, {
+									method: 'POST',
+									headers: {
+										'Content-Type': 'application/json',
+									},
+									body: JSON.stringify(ingredientObject),
+								});
+
+								const result = await postLineItemsResponse.json();
+							} catch (error) {
+								console.error('Error posting line item:', error);
+								setResultMessage('An error occurred. Please try again later.', 'error');
+								return;
+							}
+						}
+								
+						setResultMessage('The order was saved successfully.', 'success');
+
+						} catch (error) {
+							console.error('Error:', error);
+							setResultMessage('An error occurred. Please try again later.', 'error');
+						}
+				});
+			});  
+    </script>
+  </body>
+</html>
